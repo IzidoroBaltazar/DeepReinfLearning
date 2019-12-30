@@ -4,7 +4,8 @@ import torch
 from torch import FloatTensor, LongTensor
 
 
-env = UnityEnvironment(file_name="./Banana.app")
+env = UnityEnvironment(file_name="./Banana_Linux")
+# env = UnityEnvironment(file_name="./Banana.app")
 
 # get the default brain
 brain_name = env.brain_names[0]
@@ -44,7 +45,7 @@ state = env_info.vector_observations[0]            # get the current state
 env_info
 j = 0
 eps = 1.
-mx = 10
+mx = 1800
 
 total_states, total_actions, total_rewards, total_next_states, total_dones = [[], [], [], [], []]
 

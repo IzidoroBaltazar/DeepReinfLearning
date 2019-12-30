@@ -1,4 +1,5 @@
 from unityagents import UnityEnvironment
+from tqdm import tqdm
 import numpy as np
 import torch
 from torch import FloatTensor, LongTensor, cuda
@@ -55,11 +56,12 @@ mx = 1800
 replay_buffer_size = 5*200
 total_scores = []
 total_states, total_actions, total_rewards, total_next_states, total_dones = [[], [], [], [], []]
+improvement = False
 
 with open('data.csv', 'w') as f:
     f.write("Index,Score,Exploration,Rolling avg score\n")
 
-for i in range(mx):
+for i in tqdm(range(mx)):
     states, actions, rewards, next_states, dones = [[], [], [], [], []]
     score = 0                                          # initialize the score
     while True:
@@ -89,10 +91,16 @@ for i in range(mx):
             break
 
     if i <= 50:
-        eps = 0.5
+        eps = 0.6
     elif i <= 100:
-        eps = 0.25
+        eps = 0.5
     elif i <= 150:
+        eps = 0.4
+    elif i <= 200:
+        eps = 0.3
+    elif i <= 250:
+        eps = 0.2
+    elif i <= 300:
         eps = 0.1
     else:
         eps = 0.
@@ -171,10 +179,11 @@ for i in range(mx):
     with open('data.csv', 'a+') as f:
         f.write("{},{},{},{}\n".format(i, score, eps, avg_score))
 
-    print("Score: {}, i: {}, eps: {}, avg: {}".format(score, i, eps, avg_score))
+    # print("Score: {}, i: {}, eps: {}, avg: {}".format(score, i, eps, avg_score))
     env.reset(train_mode=True)
-    if avg_score > 13.:
+    if not improvement and avg_score > 13.:
         print('Training completed in {} episodes.'.format(i))
+        improvement = True
         # break
 
 agent.save_model()

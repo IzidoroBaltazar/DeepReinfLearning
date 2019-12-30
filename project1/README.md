@@ -1,16 +1,16 @@
-# Deep Reinforcement Learning Udacity Nanodegree
+# Project 1
+Deep Reinforcement Learning Udacity Nanodegree
 
-## Project 1
-
-### Task
+## Task
 Navigate unknown environment based on the rewards awarded using deep reinforcement learning.
 
-#### Input
+### Input
 Vector of size 37.
 
-#### Rewards
+### Rewards
 * 0 - no banana was picked up
 * 1 - yellow banana was picked up
 * -1 - black banana was picked up
 
-### Solution
+## Solution
+![alt text](https://raw.githubusercontent.com/IzidoroBaltazar/DeepReinfLearning/master/project1/figure.png)

@@ -48,7 +48,12 @@ j = 0
 eps = 1.
 mx = 1800
 
+replay_buffer_size = 5*200
+total_scores = []
 total_states, total_actions, total_rewards, total_next_states, total_dones = [[], [], [], [], []]
+
+with open('data.csv', 'w') as f:
+    f.write("{},{},{}\n".format('Index', 'Score', 'Exploration'))
 
 for i in range(mx):
     states, actions, rewards, next_states, dones = [[], [], [], [], []]
@@ -79,11 +84,11 @@ for i in range(mx):
         if done:                                       # exit loop if episode finished
             break
 
-    if i <= (mx/4):
+    if i <= 50:
         eps = 0.5
-    elif i <= (mx/2):
+    elif i <= 100:
         eps = 0.25
-    elif i <= 3*(mx/4):
+    elif i <= 150:
         eps = 0.1
     else:
         eps = 0.
@@ -110,6 +115,19 @@ for i in range(mx):
             total_next_states += ns_b
             total_dones += d_b
 
+        if len(total_states) > replay_buffer_size:
+            total_states = total_states[(len(total_states) - replay_buffer_size):]
+            total_actions = total_actions[(len(total_actions) - replay_buffer_size):]
+            total_rewards = total_rewards[(len(total_rewards) - replay_buffer_size):]
+            total_next_states = total_next_states[(len(total_next_states) - replay_buffer_size):]
+            total_dones = total_dones[(len(total_dones) - replay_buffer_size):]
+
+    # replay buffer size
+    # maximum score
+    # earliest acceptance criteria reached
+    # ddqn - change
+    # dueling
+    # prioritized experience replay
     # print(actions.unique)
     # print(FloatTensor(actions).size)
     # print(FloatTensor(states).size)
@@ -122,15 +140,23 @@ for i in range(mx):
                  cuda.FloatTensor(next_states),
                  cuda.FloatTensor(dones)),
                 (1.-(1./action_size)))
-    # agent.learn((cuda.FloatTensor(total_states),
-    #              cuda.LongTensor(total_actions),
-    #              cuda.FloatTensor(total_rewards),
-    #              cuda.FloatTensor(total_next_states),
-    #              cuda.FloatTensor(total_dones)),
-    #             (1.-(1./action_size)))
+    agent.learn((cuda.FloatTensor(total_states),
+                 cuda.LongTensor(total_actions),
+                 cuda.FloatTensor(total_rewards),
+                 cuda.FloatTensor(total_next_states),
+                 cuda.FloatTensor(total_dones)),
+                (1.-(1./action_size)))
+    total_scores.append(score)
+    if len(total_scores) > 100:
+        total_scores = total_scores[(len(total_scores) - 100):]
+    with open('data.csv', 'a+') as f:
+        f.write("{},{},{}\n".format(i, score, eps))
 
     print("Score: {}, i: {}, eps: {}".format(score, i, eps))
     env.reset(train_mode=True)
+    if float(sum(total_scores))/100 > 13.:
+        print('Training completed in {} episodes.'.format(i))
+        break
 
 agent.save_model()
 

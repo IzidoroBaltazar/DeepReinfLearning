@@ -4,7 +4,8 @@ import torch
 from torch import FloatTensor, LongTensor
 
 
-env = UnityEnvironment(file_name="./Banana_Linux")
+# env = UnityEnvironment(file_name="./Banana_Linux")
+env = UnityEnvironment(file_name="/data/Banana_Linux_NoVis/Banana.x86_64")
 # env = UnityEnvironment(file_name="./Banana.app")
 
 # get the default brain

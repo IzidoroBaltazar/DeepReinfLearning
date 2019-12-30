@@ -96,7 +96,7 @@ for i in range(mx):
         ns_b.append(ns)
         d_b.append(d)
 
-        if len(s_b) > 10:
+        if len(s_b) > 5:
             s_b.pop(0)
             a_b.pop(0)
             r_b.pop(0)
@@ -122,12 +122,12 @@ for i in range(mx):
                  cuda.FloatTensor(next_states),
                  cuda.FloatTensor(dones)),
                 (1.-(1./action_size)))
-    agent.learn((cuda.FloatTensor(total_states),
-                 cuda.LongTensor(total_actions),
-                 cuda.FloatTensor(total_rewards),
-                 cuda.FloatTensor(total_next_states),
-                 cuda.FloatTensor(total_dones)),
-                (1.-(1./action_size)))
+    # agent.learn((cuda.FloatTensor(total_states),
+    #              cuda.LongTensor(total_actions),
+    #              cuda.FloatTensor(total_rewards),
+    #              cuda.FloatTensor(total_next_states),
+    #              cuda.FloatTensor(total_dones)),
+    #             (1.-(1./action_size)))
 
     print("Score: {}, i: {}, eps: {}".format(score, i, eps))
     env.reset(train_mode=True)

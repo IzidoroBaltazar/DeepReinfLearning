@@ -2,11 +2,15 @@ from unityagents import UnityEnvironment
 import numpy as np
 import torch
 from torch import FloatTensor, LongTensor, cuda
+import sys
 
+DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-# env = UnityEnvironment(file_name="./Banana_Linux")
-env = UnityEnvironment(file_name="/data/Banana_Linux_NoVis/Banana.x86_64")
-# env = UnityEnvironment(file_name="./Banana.app")
+if sys.platform == "darwin":
+    env = UnityEnvironment(file_name="./Banana.app")
+else:
+    env = UnityEnvironment(file_name="/data/Banana_Linux_NoVis/Banana.x86_64")
+    # env = UnityEnvironment(file_name="./Banana_Linux")
 
 # get the default brain
 brain_name = env.brain_names[0]
@@ -53,7 +57,7 @@ total_scores = []
 total_states, total_actions, total_rewards, total_next_states, total_dones = [[], [], [], [], []]
 
 with open('data.csv', 'w') as f:
-    f.write("{},{},{}\n".format('Index', 'Score', 'Exploration'))
+    f.write("Index,Score,Exploration,Rolling avg score\n")
 
 for i in range(mx):
     states, actions, rewards, next_states, dones = [[], [], [], [], []]
@@ -134,29 +138,44 @@ for i in range(mx):
     # print(FloatTensor(rewards))
     # print(FloatTensor(next_state).size)
     # print(FloatTensor(dones).size)
-    agent.learn((cuda.FloatTensor(states),
-                 cuda.LongTensor(actions),
-                 cuda.FloatTensor(rewards),
-                 cuda.FloatTensor(next_states),
-                 cuda.FloatTensor(dones)),
-                (1.-(1./action_size)))
-    agent.learn((cuda.FloatTensor(total_states),
-                 cuda.LongTensor(total_actions),
-                 cuda.FloatTensor(total_rewards),
-                 cuda.FloatTensor(total_next_states),
-                 cuda.FloatTensor(total_dones)),
-                (1.-(1./action_size)))
+    if DEVICE == torch.device(type='cpu'):
+        agent.learn((FloatTensor(states),
+                     LongTensor(actions),
+                     FloatTensor(rewards),
+                     FloatTensor(next_states),
+                     FloatTensor(dones)),
+                    (1.-(1./action_size)))
+        agent.learn((FloatTensor(total_states),
+                     LongTensor(total_actions),
+                     FloatTensor(total_rewards),
+                     FloatTensor(total_next_states),
+                     FloatTensor(total_dones)),
+                    (1.-(1./action_size)))
+    else:
+        agent.learn((cuda.FloatTensor(states),
+                     cuda.LongTensor(actions),
+                     cuda.FloatTensor(rewards),
+                     cuda.FloatTensor(next_states),
+                     cuda.FloatTensor(dones)),
+                    (1.-(1./action_size)))
+        agent.learn((cuda.FloatTensor(total_states),
+                     cuda.LongTensor(total_actions),
+                     cuda.FloatTensor(total_rewards),
+                     cuda.FloatTensor(total_next_states),
+                     cuda.FloatTensor(total_dones)),
+                    (1.-(1./action_size)))
     total_scores.append(score)
     if len(total_scores) > 100:
         total_scores = total_scores[(len(total_scores) - 100):]
+    avg_score = float(sum(total_scores))/float(len(total_scores))
     with open('data.csv', 'a+') as f:
-        f.write("{},{},{}\n".format(i, score, eps))
+        f.write("{},{},{},{}\n".format(i, score, eps, avg_score))
 
-    print("Score: {}, i: {}, eps: {}".format(score, i, eps))
+    print("Score: {}, i: {}, eps: {}, avg: {}".format(score, i, eps, avg_score))
     env.reset(train_mode=True)
-    if float(sum(total_scores))/100 > 13.:
+    if avg_score > 13.:
         print('Training completed in {} episodes.'.format(i))
-        break
+        # break
 
 agent.save_model()
 

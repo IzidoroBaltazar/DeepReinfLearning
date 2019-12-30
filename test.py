@@ -1,7 +1,7 @@
 from unityagents import UnityEnvironment
 import numpy as np
 import torch
-from torch import FloatTensor, LongTensor
+from torch import FloatTensor, LongTensor, cuda
 
 
 # env = UnityEnvironment(file_name="./Banana_Linux")
@@ -41,7 +41,7 @@ from pycode import QNetwork, Agent, ReplayBuffer
 
 agent = Agent(state_size=state_size, action_size=action_size, seed=43)
 
-env_info = env.reset(train_mode=False)[brain_name] # reset the environment
+env_info = env.reset(train_mode=True)[brain_name] # reset the environment
 state = env_info.vector_observations[0]            # get the current state
 env_info
 j = 0
@@ -116,21 +116,21 @@ for i in range(mx):
     # print(FloatTensor(rewards))
     # print(FloatTensor(next_state).size)
     # print(FloatTensor(dones).size)
-    agent.learn((FloatTensor(states),
-                 LongTensor(actions),
-                 FloatTensor(rewards),
-                 FloatTensor(next_states),
-                 FloatTensor(dones)),
+    agent.learn((cuda.FloatTensor(states),
+                 cuda.LongTensor(actions),
+                 cuda.FloatTensor(rewards),
+                 cuda.FloatTensor(next_states),
+                 cuda.FloatTensor(dones)),
                 (1.-(1./action_size)))
-    agent.learn((FloatTensor(total_states),
-                 LongTensor(total_actions),
-                 FloatTensor(total_rewards),
-                 FloatTensor(total_next_states),
-                 FloatTensor(total_dones)),
+    agent.learn((cuda.FloatTensor(total_states),
+                 cuda.LongTensor(total_actions),
+                 cuda.FloatTensor(total_rewards),
+                 cuda.FloatTensor(total_next_states),
+                 cuda.FloatTensor(total_dones)),
                 (1.-(1./action_size)))
 
     print("Score: {}, i: {}, eps: {}".format(score, i, eps))
-    env.reset()
+    env.reset(train_mode=True)
 
 agent.save_model()
 

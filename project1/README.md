@@ -83,6 +83,7 @@ Code below is recording relevant training data when reward was non zero.
 ```
 ### Training
 Code below is example of training. We tried multiple training strategies.
+To reproduce achieved results parameters above might need to be changed and run `python3 train.py` (assuming all of the `requirements.txt` are fullfilled).
 * use only latest episode for training
 * use only enhanced training data
 * use both

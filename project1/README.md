@@ -13,7 +13,7 @@ Vector of size 37.
 * -1 - black banana was picked up
 
 ## Solution
-I used code from previous code example as Deep Q-Network agent [repo link](https://github.com/udacity/deep-reinforcement-learning/blob/master/dqn/solution/dqn_agent.py).
+We used code from previous code example as Deep Q-Network agent [repo link](https://github.com/udacity/deep-reinforcement-learning/blob/master/dqn/solution/dqn_agent.py).
 
 ### Parameters
 * eps - random exploration probability
@@ -102,7 +102,7 @@ Code below is example of training. We tried multiple training strategies.
                      FloatTensor(total_dones)),
                     (1.-(1./action_size)))
 ```
-I have recorded results below.
+We have recorded results below.
 
 * Training with 20 episodes spent on each exploration level. Random action was taken with probability from 0.6 - 0.05.
 ![alt text](https://raw.githubusercontent.com/IzidoroBaltazar/DeepReinfLearning/master/project1/figure.png)
@@ -125,3 +125,5 @@ I have recorded results below.
 ### Conclusions
 Objective was reached fastest in about 350 episodes. It was accomplished with the extended training set.
 Best rolling average was slightly above 17. It was impossible to get above farther above 17. Consistently rolling average was oscilating from 15 to 17 points per episode.
+
+Overall highest score recorded in single episode was 30.

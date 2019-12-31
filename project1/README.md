@@ -13,6 +13,10 @@ Vector of size 37.
 * -1 - black banana was picked up
 
 ## Solution
+I used code from previous example as dqn agent [repo link](https://github.com/udacity/deep-reinforcement-learning/blob/master/dqn/solution/dqn_agent.py)
+
+I have recorded results below.
+
 * Training with 20 episodes spent on each exploration level. Random action was taken with probability from 0.6 - 0.05.
 ![alt text](https://raw.githubusercontent.com/IzidoroBaltazar/DeepReinfLearning/master/project1/figure.png)
 * Training with 15 episodes spent on each exploration level. Random action was taken with probability from 0.6 - 0.05. No data augmentation.

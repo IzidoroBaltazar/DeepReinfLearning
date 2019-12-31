@@ -13,7 +13,42 @@ Vector of size 37.
 * -1 - black banana was picked up
 
 ## Solution
-I used code from previous example as dqn agent [repo link](https://github.com/udacity/deep-reinforcement-learning/blob/master/dqn/solution/dqn_agent.py)
+I used code from previous code example as dqn agent [repo link](https://github.com/udacity/deep-reinforcement-learning/blob/master/dqn/solution/dqn_agent.py).
+
+### Parameters
+* eps - random exploration probability
+* eps_step - decrement in eps
+* mx - number of maximal training iterations
+* replay_buffer_size - this variable was introduced because training in the beginning was very slow due to very few traning rewards. I considered only 10 previous states
+    to be relevant for reward. The replay buffer is consisting of 10 steps before non zero reward.
+```python
+eps = 1.
+eps_step = 15
+mx = 1800
+
+replay_buffer_size = 10*200
+total_scores = []
+total_states, total_actions, total_rewards, total_next_states, total_dones = [[], [], [], [], []]
+```
+* Decrement in exploration parameter eps.
+```python
+    if i <= eps_step:
+        eps = 0.6
+    elif i <= 2*eps_step:
+        eps = 0.5
+    elif i <= 3*eps_step:
+        eps = 0.4
+    elif i <= 4*eps_step:
+        eps = 0.3
+    elif i <= 5*eps_step:
+        eps = 0.2
+    elif i <= 6*eps_step:
+        eps = 0.1
+    elif i <= 7*eps_step:
+        eps = 0.05
+    else:
+        eps = 0.
+```
 
 I have recorded results below.
 

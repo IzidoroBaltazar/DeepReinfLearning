@@ -13,4 +13,15 @@ Vector of size 37.
 * -1 - black banana was picked up
 
 ## Solution
+* Training with 20 episodes spent on each exploration level. Random action was taken with probability from 0.6 - 0.05.
 ![alt text](https://raw.githubusercontent.com/IzidoroBaltazar/DeepReinfLearning/master/project1/figure.png)
+* Training with 15 episodes spent on each exploration level. Random action was taken with probability from 0.6 - 0.05. No data augmentation.
+![alt text](https://raw.githubusercontent.com/IzidoroBaltazar/DeepReinfLearning/master/project1/figure-eps-step-15-no-augmentation.png)
+* Training with 5 episodes spent on each exploration level. Random action was taken with probability from 0.6 - 0.05.
+![alt text](https://raw.githubusercontent.com/IzidoroBaltazar/DeepReinfLearning/master/project1/figure-eps-step-5.png)
+* Training with 15 episodes spent on each exploration level. Random action was taken with probability from 0.6 - 0.05.
+![alt text](https://raw.githubusercontent.com/IzidoroBaltazar/DeepReinfLearning/master/project1/figure-eps-step-15.png)
+* Training with 20 episodes spent on each exploration level. Random action was taken with probability from 0.6 - 0.05.
+![alt text](https://raw.githubusercontent.com/IzidoroBaltazar/DeepReinfLearning/master/project1/figure-eps-step-20.png)
+* Training with 20 episodes spent on each exploration level. Random action was taken with probability from 0.6 - 0.05. Model was trained on the selected buffer and each episode.
+![alt text](https://raw.githubusercontent.com/IzidoroBaltazar/DeepReinfLearning/master/project1/figure-train-modified-buffer.png)

@@ -122,10 +122,12 @@ class Agent():
                 tau*local_param.data + (1.0-tau)*target_param.data)
 
     def save_model(self):
-        torch.save(self.qnetwork_local.state_dict(), "model/weights.torch")
+        torch.save(self.qnetwork_local.state_dict(), "model/weights_local.torch")
+        torch.save(self.qnetwork_target.state_dict(), "model/weights_target.torch")
 
     def load_model(self):
-        self.qnetwork_local.load_state_dict(torch.load("model/weights.torch"))
+        self.qnetwork_local.load_state_dict(torch.load("model/weights_local.torch"))
+        self.qnetwork_target.load_state_dict(torch.load("model/weights_target.torch"))
 
 
 class ReplayBuffer:

@@ -25,3 +25,6 @@ Vector of size 37.
 ![alt text](https://raw.githubusercontent.com/IzidoroBaltazar/DeepReinfLearning/master/project1/figure-eps-step-20.png)
 * Training with 20 episodes spent on each exploration level. Random action was taken with probability from 0.6 - 0.05. Model was trained on the selected buffer and each episode.
 ![alt text](https://raw.githubusercontent.com/IzidoroBaltazar/DeepReinfLearning/master/project1/figure-train-modified-buffer.png)
+* Test run with model weights loaded from `model/weights_local.torch` and `model/weights_target.torch`.
+* To test included model you can run `python test.py` it will generate file data-test.csv with performace data recorded.
+![alt text](https://raw.githubusercontent.com/IzidoroBaltazar/DeepReinfLearning/master/project1/figure-test.png)

@@ -137,7 +137,7 @@ for i in tqdm(range(mx)):
     # replay buffer size
     # maximum score
     # earliest acceptance criteria reached
-    # ddqn - change
+    # ddqn - change one line
     # dueling
     # prioritized experience replay
 

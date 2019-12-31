@@ -66,4 +66,10 @@ I have recorded results below.
 ![alt text](https://raw.githubusercontent.com/IzidoroBaltazar/DeepReinfLearning/master/project1/figure-train-modified-buffer.png)
 * Test run with model weights loaded from `model/weights_local.torch` and `model/weights_target.torch`.
 * To test included model you can run `python test.py` it will generate file data-test.csv with performace data recorded.
+* Max rolling average: 15.5
+* Max score: 22.0
 ![alt text](https://raw.githubusercontent.com/IzidoroBaltazar/DeepReinfLearning/master/project1/figure-test.png)
+
+### Conclusions
+Objective was reached fastest in about 350 episodes. It was accomplished with the extended training set.
+Best rolling average was slightly above 17. It was impossible to get above farther above 17. Consistently rolling average was oscilating from 15 to 17 points per episode.

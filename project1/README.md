@@ -13,7 +13,7 @@ Vector of size 37.
 * -1 - black banana was picked up
 
 ## Solution
-I used code from previous code example as dqn agent [repo link](https://github.com/udacity/deep-reinforcement-learning/blob/master/dqn/solution/dqn_agent.py).
+I used code from previous code example as Deep Q-Network agent [repo link](https://github.com/udacity/deep-reinforcement-learning/blob/master/dqn/solution/dqn_agent.py).
 
 ### Parameters
 * eps - random exploration probability

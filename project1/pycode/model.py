@@ -1,3 +1,7 @@
+"""
+originally taken from
+https://github.com/udacity/deep-reinforcement-learning/blob/master/dqn/solution/model.py
+"""
 import torch
 import torch.nn as nn
 import torch.nn.functional as F

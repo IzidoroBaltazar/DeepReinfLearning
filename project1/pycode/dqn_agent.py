@@ -1,3 +1,7 @@
+"""
+originally taken from
+https://github.com/udacity/deep-reinforcement-learning/blob/master/dqn/solution/dqn_agent.py
+"""
 import numpy as np
 import random
 from collections import namedtuple, deque

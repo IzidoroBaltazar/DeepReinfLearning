@@ -142,12 +142,14 @@ for i in tqdm(range(mx)):
     # prioritized experience replay
 
     if DEVICE == torch.device(type='cpu'):
+        # use latest episode for training
         agent.learn((FloatTensor(states),
                      LongTensor(actions),
                      FloatTensor(rewards),
                      FloatTensor(next_states),
                      FloatTensor(dones)),
                     (1.-(1./action_size)))
+        # use enhanced training data
         agent.learn((FloatTensor(total_states),
                      LongTensor(total_actions),
                      FloatTensor(total_rewards),
@@ -155,12 +157,14 @@ for i in tqdm(range(mx)):
                      FloatTensor(total_dones)),
                     (1.-(1./action_size)))
     else:
+        # use latest episode for training
         agent.learn((cuda.FloatTensor(states),
                      cuda.LongTensor(actions),
                      cuda.FloatTensor(rewards),
                      cuda.FloatTensor(next_states),
                      cuda.FloatTensor(dones)),
                     (1.-(1./action_size)))
+        # use enhanced training data
         agent.learn((cuda.FloatTensor(total_states),
                      cuda.LongTensor(total_actions),
                      cuda.FloatTensor(total_rewards),

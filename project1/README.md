@@ -81,7 +81,27 @@ Code below is recording relevant training data when reward was non zero.
             total_next_states = total_next_states[(len(total_next_states) - replay_buffer_size):]
             total_dones = total_dones[(len(total_dones) - replay_buffer_size):]
 ```
-
+### Training
+Code below is example of training. We tried multiple training strategies.
+* use only latest episode for training
+* use only enhanced training data
+* use both
+```python
+        # use latest episode for training
+        agent.learn((FloatTensor(states),
+                     LongTensor(actions),
+                     FloatTensor(rewards),
+                     FloatTensor(next_states),
+                     FloatTensor(dones)),
+                    (1.-(1./action_size)))
+        # use enhanced training data
+        agent.learn((FloatTensor(total_states),
+                     LongTensor(total_actions),
+                     FloatTensor(total_rewards),
+                     FloatTensor(total_next_states),
+                     FloatTensor(total_dones)),
+                    (1.-(1./action_size)))
+```
 I have recorded results below.
 
 * Training with 20 episodes spent on each exploration level. Random action was taken with probability from 0.6 - 0.05.

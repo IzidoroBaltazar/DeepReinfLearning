@@ -114,7 +114,9 @@ We have recorded results below.
 ![alt text](https://raw.githubusercontent.com/IzidoroBaltazar/DeepReinfLearning/master/project1/figure-eps-step-15.png)
 * Training with 20 episodes spent on each exploration level. Random action was taken with probability from 0.6 - 0.05.
 ![alt text](https://raw.githubusercontent.com/IzidoroBaltazar/DeepReinfLearning/master/project1/figure-eps-step-20.png)
-* Training with 20 episodes spent on each exploration level. Random action was taken with probability from 0.6 - 0.05. Model was trained on the selected buffer and each episode.
+* Training with 20 episodes spent on each exploration level. Random action was taken with probability from 0.6 - 0.05.
+* Model was trained on enhanced data each episode data.
+* Objective was reached very late in almost 600 episodes
 ![alt text](https://raw.githubusercontent.com/IzidoroBaltazar/DeepReinfLearning/master/project1/figure-train-modified-buffer.png)
 
 ### Test

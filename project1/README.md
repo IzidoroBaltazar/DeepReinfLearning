@@ -105,7 +105,17 @@ Code below is example of training. We tried multiple training strategies.
 We have recorded results below.
 
 * Training with 20 episodes spent on each exploration level. Random action was taken with probability from 0.6 - 0.05.
+* During this training we found that rolling average stopped improving shortly after objective was reached (rolling average of 13).
 ![alt text](https://raw.githubusercontent.com/IzidoroBaltazar/DeepReinfLearning/master/project1/figure.png)
+
+We have introduced early stopping criterion.
+```python
+    if i > 200 and i > stop + 50:  # i > 200 don't consider stopping criteria if still exploring
+        print('Training finished no improvements in score recorded in 50 episodes')
+        break
+```
+This criterion will stop training if no improvement in rolling average was recorded in the last 50 episodes.
+
 * Training with 15 episodes spent on each exploration level. Random action was taken with probability from 0.6 - 0.05. No data augmentation.
 ![alt text](https://raw.githubusercontent.com/IzidoroBaltazar/DeepReinfLearning/master/project1/figure-eps-step-15-no-augmentation.png)
 * Training with 5 episodes spent on each exploration level. Random action was taken with probability from 0.6 - 0.05.

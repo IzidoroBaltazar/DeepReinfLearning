@@ -49,6 +49,38 @@ total_states, total_actions, total_rewards, total_next_states, total_dones = [[]
     else:
         eps = 0.
 ```
+### Augmentation of training data
+Code below is recording relevant training data when reward was non zero.
+```python
+    s_b, a_b, r_b, ns_b, d_b = [[], [], [], [], []]
+    for s, a, r, ns, d in zip(states, actions, rewards, next_states, dones):
+        s_b.append(s)
+        a_b.append(a)
+        r_b.append(r)
+        ns_b.append(ns)
+        d_b.append(d)
+
+        if len(s_b) > 10:
+            s_b.pop(0)
+            a_b.pop(0)
+            r_b.pop(0)
+            ns_b.pop(0)
+            d_b.pop(0)
+
+        if r != 0:
+            total_states += s_b
+            total_actions += a_b
+            total_rewards += r_b
+            total_next_states += ns_b
+            total_dones += d_b
+
+        if len(total_states) > replay_buffer_size:
+            total_states = total_states[(len(total_states) - replay_buffer_size):]
+            total_actions = total_actions[(len(total_actions) - replay_buffer_size):]
+            total_rewards = total_rewards[(len(total_rewards) - replay_buffer_size):]
+            total_next_states = total_next_states[(len(total_next_states) - replay_buffer_size):]
+            total_dones = total_dones[(len(total_dones) - replay_buffer_size):]
+```
 
 I have recorded results below.
 

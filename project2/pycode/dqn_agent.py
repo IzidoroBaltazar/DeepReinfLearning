@@ -78,9 +78,9 @@ class Agent():
 
         # Epsilon-greedy action selection
         if random.random() > eps:
-            return np.argmax(action_values.cpu().data.numpy())
+            return action_values.cpu().data.numpy()[0]
         else:
-            return random.choice(np.arange(self.action_size))
+            return np.random.uniform(low=-1, high=1, size=self.action_size)
 
     def learn(self, experiences, gamma):
         """Update value parameters using given batch of experience tuples.
@@ -94,12 +94,14 @@ class Agent():
 
         # Get max predicted Q values (for next states) from target model
         Q_targets_next = self.qnetwork_target(
-            next_states).detach().max(1)[0].unsqueeze(1)
+            next_states).detach()
+        #    next_states).detach().max(1)[0].unsqueeze(1)
         # Compute Q targets for current states
         Q_targets = rewards + (gamma * Q_targets_next * (1 - dones))
 
         # Get expected Q values from local model
-        Q_expected = self.qnetwork_local(states).gather(1, actions)
+        Q_expected = self.qnetwork_local(states)
+        # print(Q_targets.shape, Q_expected.shape)
 
         # Compute loss
         loss = F.mse_loss(Q_expected, Q_targets)
@@ -109,7 +111,7 @@ class Agent():
         self.optimizer.step()
 
         # ------------------- update target network ------------------- #
-        if self.t_step % 10 == 0:
+        if self.t_step % (10*UPDATE_EVERY) == 0:
             self.soft_update(self.qnetwork_local, self.qnetwork_target, TAU)
 
     def soft_update(self, local_model, target_model, tau):

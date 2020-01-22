@@ -51,10 +51,10 @@ state = env_info.vector_observations[0]            # get the current state
 env_info
 j = 0
 eps = 1.
-eps_step = 15
+eps_step = 150
 mx = 1800
 
-replay_buffer_size = 10*200
+replay_buffer_size = 10*1000
 total_scores = []
 total_states, total_actions, total_rewards, total_next_states, total_dones = [[], [], [], [], []]
 improvement = False
@@ -79,7 +79,8 @@ for i in tqdm(range(mx)):
         score += reward                                # update the score
         agent.step(state, action, reward, next_state, done)
         states.append(state)
-        actions.append([action])
+        actions.append(action)
+        # print(action)
         rewards.append([reward])
         next_states.append(next_state)
         dones.append([done])
@@ -113,7 +114,7 @@ for i in tqdm(range(mx)):
         ns_b.append(ns)
         d_b.append(d)
 
-        if len(s_b) > 10:
+        if len(s_b) > 5:
             s_b.pop(0)
             a_b.pop(0)
             r_b.pop(0)
@@ -137,40 +138,43 @@ for i in tqdm(range(mx)):
     # replay buffer size
     # maximum score
     # earliest acceptance criteria reached
-    # ddqn - change one line
     # dueling
     # prioritized experience replay
 
     if DEVICE == torch.device(type='cpu'):
         # use latest episode for training
-        agent.learn((FloatTensor(states),
-                     LongTensor(actions),
-                     FloatTensor(rewards),
-                     FloatTensor(next_states),
-                     FloatTensor(dones)),
-                    (1.-(1./action_size)))
+        # print(FloatTensor(actions)[0])
+        # print(FloatTensor(states)[0])
+        # agent.learn((FloatTensor(states),
+        #              FloatTensor(actions),
+        #              FloatTensor(rewards),
+        #              FloatTensor(next_states),
+        #              FloatTensor(dones)),
+        #             (1.-(1./action_size)))
         # use enhanced training data
-        agent.learn((FloatTensor(total_states),
-                     LongTensor(total_actions),
-                     FloatTensor(total_rewards),
-                     FloatTensor(total_next_states),
-                     FloatTensor(total_dones)),
-                    (1.-(1./action_size)))
+        for _ in range(10):
+            agent.learn((FloatTensor(total_states),
+                        FloatTensor(total_actions),
+                        FloatTensor(total_rewards),
+                        FloatTensor(total_next_states),
+                        FloatTensor(total_dones)),
+                        (1.-(1./action_size)))
     else:
         # use latest episode for training
-        agent.learn((cuda.FloatTensor(states),
-                     cuda.LongTensor(actions),
-                     cuda.FloatTensor(rewards),
-                     cuda.FloatTensor(next_states),
-                     cuda.FloatTensor(dones)),
-                    (1.-(1./action_size)))
+        # agent.learn((cuda.FloatTensor(states),
+        #              cuda.FloatTensor(actions),
+        #              cuda.FloatTensor(rewards),
+        #              cuda.FloatTensor(next_states),
+        #              cuda.FloatTensor(dones)),
+        #             (1.-(1./action_size)))
         # use enhanced training data
-        agent.learn((cuda.FloatTensor(total_states),
-                     cuda.LongTensor(total_actions),
-                     cuda.FloatTensor(total_rewards),
-                     cuda.FloatTensor(total_next_states),
-                     cuda.FloatTensor(total_dones)),
-                    (1.-(1./action_size)))
+        for _ in range(10):
+            agent.learn((cuda.FloatTensor(total_states),
+                        cuda.FloatTensor(total_actions),
+                        cuda.FloatTensor(total_rewards),
+                        cuda.FloatTensor(total_next_states),
+                        cuda.FloatTensor(total_dones)),
+                        (1.-(1./action_size)))
     total_scores.append(score)
     if len(total_scores) > 100:
         total_scores = total_scores[(len(total_scores) - 100):]
@@ -189,9 +193,9 @@ for i in tqdm(range(mx)):
         max_value = avg_score
         stop = i
 
-    if i > 200 and i > stop + 50:  # i > 200 don't consider stopping criteria if still exploring
-        print('Training finished no improvements in score recorded in 50 episodes')
-        break
+    # if i > 200 and i > stop + 50:  # i > 200 don't consider stopping criteria if still exploring
+    #     print('Training finished no improvements in score recorded in 50 episodes')
+    #     break
 
 
 agent.save_model()

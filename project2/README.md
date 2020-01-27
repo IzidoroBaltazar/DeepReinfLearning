@@ -17,7 +17,7 @@ Reach average reward of at least 30 points per episode.
 We used code from previous code example as Deep Deterministic Policy Gradient learning [repo link](https://github.com/udacity/deep-reinforcement-learning/blob/master/ddpg-bipedal).
 
 ### Parameters
-* mx - number of maximal training iterations `1000`
+* `mx` - number of maximal training iterations `1000`
 
 ### Modification of nosie generator
 Code below is highlighting change of noise generator from the original `ddpg-bipedal` example.
@@ -39,14 +39,19 @@ To reproduce achieved results parameters you can run `python3 train.py` (assumin
 Image showing solution to the problem. Robot arm follows taget.
 ![alt text](https://raw.githubusercontent.com/IzidoroBaltazar/DeepReinfLearning/master/project2/test.gif)
 
-* Objective was reached very late in almost 800 episodes
+* Objective was reached in 309 episodes.
+* Maximum rolling average was reached in 368 episodes.
+* Max rolling average: 37.159
+* Max score: 39.63
 ![alt text](https://raw.githubusercontent.com/IzidoroBaltazar/DeepReinfLearning/master/project2/figure-train.png)
 
 ### Test
 * Test run with model weights loaded from `model/weights_local.torch` and `model/weights_target.torch` weights for cirtic are stored and loaded as well.
 * To test included model you can run `python3 test.py` it will generate file data-test.csv with performace data recorded.
-* Max rolling average: 
-* Max score: 
+* Max rolling average: 38.56
+* Max score: 39.47
 ![alt text](https://raw.githubusercontent.com/IzidoroBaltazar/DeepReinfLearning/master/project2/figure-test.png)
 
 ### Conclusions
+Model training was very sensitive to changes in noise or qnetwork architecture modifications.
+However network could be trained for the target score with wide range of number of neurons.

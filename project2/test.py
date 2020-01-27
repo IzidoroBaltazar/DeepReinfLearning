@@ -71,7 +71,7 @@ for i in t:
 
     while True:
         # for state in states:
-        actions = agent.act(states)
+        actions = agent.act(states, noise=False)
         env_info = env.step(actions)[brain_name]           # send all actions to tne environment
         next_states = env_info.vector_observations         # get next state (for each agent)
         rewards = env_info.rewards                         # get reward (for each agent)

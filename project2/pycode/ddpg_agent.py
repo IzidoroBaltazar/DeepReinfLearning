@@ -168,10 +168,10 @@ class Agent():
         torch.save(self.critic_target.state_dict(), "model/critic_target.torch")
 
     def load_model(self):
-        self.qnetwork_local.load_state_dict(torch.load("model/weights_local.torch"))
-        self.qnetwork_target.load_state_dict(torch.load("model/weights_target.torch"))
-        self.critic_local.load_state_dict(torch.load("model/critic_local.torch"))
-        self.critic_target.load_state_dict(torch.load("model/critic_local.torch"))
+        self.qnetwork_local.load_state_dict(torch.load("model/weights_local.torch", map_location=device))
+        self.qnetwork_target.load_state_dict(torch.load("model/weights_target.torch", map_location=device))
+        self.critic_local.load_state_dict(torch.load("model/critic_local.torch", map_location=device))
+        self.critic_target.load_state_dict(torch.load("model/critic_local.torch", map_location=device))
 
 
 class ReplayBuffer:

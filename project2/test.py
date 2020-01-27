@@ -1,8 +1,7 @@
 from unityagents import UnityEnvironment
-from tqdm import tqdm
+from tqdm import trange
 import numpy as np
 import torch
-from torch import FloatTensor, LongTensor, cuda
 import sys
 # agent code from
 from pycode import QNetwork, Agent, ReplayBuffer
@@ -13,7 +12,6 @@ if sys.platform == "darwin":
     env = UnityEnvironment(file_name="./Reacher.app")
 else:
     env = UnityEnvironment(file_name="Reacher_Linux_NoVis/Reacher.x86_64")
-    # env = UnityEnvironment(file_name="./Banana_Linux")
 
 # get the default brain
 brain_name = env.brain_names[0]
@@ -46,6 +44,7 @@ env_info.vector_observations.shape
 
 agent = Agent(state_size=state_size, action_size=action_size, seed=43)
 agent.load_model()
+num_agents = len(env_info.agents)
 
 env_info = env.reset(train_mode=True)[brain_name] # reset the environment
 state = env_info.vector_observations[0]            # get the current state
@@ -61,6 +60,7 @@ with open('data-test.csv', 'w') as f:
 
 stop = 0
 max_value = -10  # start with negative score to prevent early training stop
+t = trange(1, mx+1)
 
 for i in t:
     env_info = env.reset(train_mode=True)[brain_name] # reset the environment
@@ -84,8 +84,7 @@ for i in t:
 
     total_scores.append(np.mean(scores))
     avg_score = np.mean(total_scores[i-min(i,100):i+1])
-    with open('data.csv', 'a+') as f:
+    with open('data-test.csv', 'a+') as f:
         f.write("{},{:.3f},{:.3f}\n".format(i, scores[0], avg_score))
 
-    # print("Score: {:.3f}, i: {}, avg: {:.3f}".format(scores[0], i, avg_score))
     env.reset(train_mode=True)

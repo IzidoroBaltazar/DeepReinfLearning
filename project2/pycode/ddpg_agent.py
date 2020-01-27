@@ -1,6 +1,8 @@
 """
 originally taken from
 https://github.com/udacity/deep-reinforcement-learning/blob/master/dqn/solution/dqn_agent.py
+Modified for project2 based on
+https://github.com/udacity/deep-reinforcement-learning/blob/master/ddpg-bipedal
 """
 import copy
 import numpy as np

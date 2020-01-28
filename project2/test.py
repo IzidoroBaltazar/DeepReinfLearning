@@ -9,9 +9,11 @@ from pycode import QNetwork, Agent, ReplayBuffer
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 if sys.platform == "darwin":
-    env = UnityEnvironment(file_name="./Reacher.app")
+    # env = UnityEnvironment(file_name="./Reacher.app")  # 1 agent
+    env = UnityEnvironment(file_name="./Reacher_20.app")  # 20 agents
 else:
-    env = UnityEnvironment(file_name="Reacher_Linux_NoVis/Reacher.x86_64")
+    # env = UnityEnvironment(file_name="Reacher_Linux_NoVis/Reacher.x86_64")  # 1 agents
+    env = UnityEnvironment(file_name="Reacher_Linux_NoVis_multi/Reacher.x86_64")  # 20 agents
 
 # get the default brain
 brain_name = env.brain_names[0]

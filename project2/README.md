@@ -32,7 +32,9 @@ class OUNoise:
 ```
 ### Training
 Without the modification of Ornstein-Uhlenbeck process I was not able to reach the training goal.
-Neural network configuratio is same as in `ddpg-bipedal` 1st layer contains 256 neurons and 2nd layer has 128 neurons.
+Neural network configuratios are the same as in `ddpg-bipedal` for actor 1st layer contains 256 neurons and 2nd layer has 128 neurons 3rd layer has 4 neurons.
+For critic base configuration is the same as for actor with different 3rd layer which contains only 1 neuron and no linear activation function. We have
+experimented with hyperbolic tangens as activation function but the results were not good enough. I suspect it has to do with magnitude of the error.
 Activation function is hyperbolic tangens because action is vector of size 4 and values are continuous from -1 to 1.
 Model was saved every time new rolling average maximum was reached.
 If no new rolling average maximum was reached in 80 episodes traning was terminated.
@@ -54,7 +56,7 @@ Image showing solution to the problem. Robot arm follows taget.
 * Max score: 39.47
 ![alt text](https://raw.githubusercontent.com/IzidoroBaltazar/DeepReinfLearning/master/project2/figure-test.png)
 
-## 20 paddle problem
+## 20 paddles problem
 We modified code for 1 paddle to run for multiple paddles.
 Episode training increased from 2.5 seconds to 7.5 seconds training was done on Nvidia GPU.
 
@@ -65,6 +67,10 @@ Episode training increased from 2.5 seconds to 7.5 seconds training was done on 
 * Max rolling average: 35.504
 * Max score: 39.286
 ![alt text](https://raw.githubusercontent.com/IzidoroBaltazar/DeepReinfLearning/master/project2/figure-train-20.png)
+
+Rolling average curve was smoother for 20 paddles problem than for 1 paddle.
+Objective score was reached at about the same time (slightly sooner for 20 paddles than for 1 paddle problem).
+Maximal rolling average of training score was reached later for 20 paddles problem.
 
 ### Test
 Video below is visualizing trained reachers.

@@ -61,9 +61,18 @@ Episode training increased from 2.5 seconds to 7.5 seconds training was done on 
 ### Training
 
 * Objective was reached in 301
+* Maximum rolling average was reached in 409 episodes.
+* Max rolling average: 35.504
+* Max score: 39.286
+![alt text](https://raw.githubusercontent.com/IzidoroBaltazar/DeepReinfLearning/master/project2/figure-train-20.png)
+
 ### Test
 Video below is visualizing trained reachers.
 ![alt text](https://raw.githubusercontent.com/IzidoroBaltazar/DeepReinfLearning/master/project2/test_20.gif)
+
+After loading training weights we recorded following test results.
+* Average of test scores after 100 episodes was 36.18.
+![alt text](https://raw.githubusercontent.com/IzidoroBaltazar/DeepReinfLearning/master/project2/figure-test-20.png)
 
 ### Conclusions
 Model training was very sensitive to changes in noise or qnetwork architecture modifications.

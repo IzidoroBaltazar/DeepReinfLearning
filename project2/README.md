@@ -63,7 +63,7 @@ Episode training increased from 2.5 seconds to 7.5 seconds training was done on 
 * Objective was reached in 301
 ### Test
 Video below is visualizing trained reachers.
-![alt text](https://raw.githubusercontent.com/IzidoroBaltazar/DeepReinfLearning/master/project2/test-20.gif)
+![alt text](https://raw.githubusercontent.com/IzidoroBaltazar/DeepReinfLearning/master/project2/test_20.gif)
 
 ### Conclusions
 Model training was very sensitive to changes in noise or qnetwork architecture modifications.

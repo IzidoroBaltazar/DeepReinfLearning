@@ -32,10 +32,10 @@ class OUNoise:
 ```
 ### Training
 Without the modification of Ornstein-Uhlenbeck process I was not able to reach the training goal.
-Neural network configuratios are the same as in `ddpg-bipedal` for actor 1st layer contains 256 neurons and 2nd layer has 128 neurons 3rd layer has 4 neurons.
-For critic base configuration is the same as for actor with different 3rd layer which contains only 1 neuron and no linear activation function. We have
-experimented with hyperbolic tangens as activation function but the results were not good enough. I suspect it has to do with magnitude of the error.
-Activation function is hyperbolic tangens because action is vector of size 4 and values are continuous from -1 to 1.
+Neural network architecures are the same as in `ddpg-bipedal` for actor 1st layer contains 256 neurons and 2nd layer has 128 neurons 3rd layer has 4 neurons.
+Ativation function is hyperbolic tangens because action is vector of size 4 and values are continuous from -1 to 1.
+For critic base configuration is the same as for actor with different 3rd layer which contains only 1 neuron and linear activation function. We have
+experimented with hyperbolic tangens as activation function but the results were not good enough. We suspect it has to do with magnitude of the error.
 Model was saved every time new rolling average maximum was reached.
 If no new rolling average maximum was reached in 80 episodes traning was terminated.
 
@@ -79,6 +79,10 @@ Video below is visualizing trained reachers.
 After loading training weights we recorded following test results.
 * Average of test scores after 100 episodes was 36.18.
 ![alt text](https://raw.githubusercontent.com/IzidoroBaltazar/DeepReinfLearning/master/project2/figure-test-20.png)
+
+### 1 vs 20 paddles training
+Graph below visualize difference between training 1 and 20 paddles.
+![alt text](https://raw.githubusercontent.com/IzidoroBaltazar/DeepReinfLearning/master/project2/figure-rolling-averages.png)]
 
 ### Conclusions
 Model training was very sensitive to changes in noise or qnetwork architecture modifications.

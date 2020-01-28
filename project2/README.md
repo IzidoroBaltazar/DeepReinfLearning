@@ -17,6 +17,7 @@ Reach average reward of at least 30 points per episode.
 ## Solution
 We used code from previous code example as Deep Deterministic Policy Gradient learning [repo link](https://github.com/udacity/deep-reinforcement-learning/blob/master/ddpg-bipedal).
 
+## 1 paddle problem
 ### Parameters
 * `mx` - number of maximal training iterations `1000`
 
@@ -53,6 +54,19 @@ Image showing solution to the problem. Robot arm follows taget.
 * Max score: 39.47
 ![alt text](https://raw.githubusercontent.com/IzidoroBaltazar/DeepReinfLearning/master/project2/figure-test.png)
 
+## 20 paddle problem
+We modified code for 1 paddle to run for multiple paddles.
+Episode training increased from 2.5 seconds to 7.5 seconds training was done on Nvidia GPU.
+
+### Training
+
+* Objective was reached in 301
+### Test
+Video below is visualizing trained reachers.
+![alt text](https://raw.githubusercontent.com/IzidoroBaltazar/DeepReinfLearning/master/project2/test_20.gif)
+
 ### Conclusions
 Model training was very sensitive to changes in noise or qnetwork architecture modifications.
 However network could be trained for the target score with wide range of number of neurons.
+Given the changes in convergence due to adding sigma decay. I think there is space for improvement in modifying noise generation.
+Another possible modification is neural network architecture.

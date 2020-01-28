@@ -38,7 +38,7 @@ print('States have length:', state_size)
 
 # env_info
 j = 0
-mx = 2000
+mx = 1000
 
 improvement = False
 total_scores = []

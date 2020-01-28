@@ -7,8 +7,8 @@ from pycode import Agent
 if sys.platform == "darwin":
     env = UnityEnvironment(file_name="./Reacher.app")
 else:
-    # env = UnityEnvironment(file_name="./Reacher_Linux_NoVis_multi/Reacher.x86_64")
-    env = UnityEnvironment(file_name="./Reacher_Linux_NoVis/Reacher.x86_64")
+    env = UnityEnvironment(file_name="./Reacher_Linux_NoVis_multi/Reacher.x86_64")
+    # env = UnityEnvironment(file_name="./Reacher_Linux_NoVis/Reacher.x86_64")
 
 # get the default brain
 brain_name = env.brain_names[0]
@@ -36,12 +36,9 @@ print('States look like:', state)
 state_size = len(state)
 print('States have length:', state_size)
 
-
-agent = Agent(state_size=state_size, action_size=action_size, seed=2276)
-
 # env_info
 j = 0
-mx = 1000
+mx = 2000
 
 improvement = False
 total_scores = []
@@ -52,6 +49,7 @@ with open('data.csv', 'w') as f:
 stop = 0
 max_value = -10  # start with negative score to prevent early training stop
 num_agents = len(env_info.agents)
+agent = Agent(state_size=state_size, action_size=action_size, seed=2276, num_agents=num_agents)
 
 all_states, all_actions, all_rewards, all_next_states, all_dones = [[], [], [], [], []]
 t = trange(1, mx+1)
@@ -79,7 +77,7 @@ for i in t:
     total_scores.append(np.mean(scores))
     avg_score = np.mean(total_scores[i-min(i,100):i+1])
     with open('data.csv', 'a+') as f:
-        f.write("{},{:.3f},{:.3f}\n".format(i, scores[0], avg_score))
+        f.write("{},{:.3f},{:.3f}\n".format(i, total_scores[-1], avg_score))
 
     # print("Score: {:.3f}, i: {}, avg: {:.3f}".format(scores[0], i, avg_score))
     env.reset(train_mode=True)
@@ -89,7 +87,7 @@ for i in t:
         # break
 
     # t.set_description('Score {:.3f}, Score Avg. {:.3f}'.format(scores[0], avg_score))
-    t.set_postfix(score=scores[0], score_avg=avg_score)
+    t.set_postfix(score=total_scores[-1], score_avg=avg_score)
 
     if avg_score > max_value:
         agent.save_model()

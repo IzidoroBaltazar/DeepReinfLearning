@@ -44,9 +44,9 @@ print('States have length:', state_size)
 
 env_info.vector_observations.shape
 
-agent = Agent(state_size=state_size, action_size=action_size, seed=43)
-agent.load_model()
 num_agents = len(env_info.agents)
+agent = Agent(state_size=state_size, action_size=action_size, seed=43, num_agents=num_agents)
+agent.load_model()
 
 env_info = env.reset(train_mode=True)[brain_name] # reset the environment
 state = env_info.vector_observations[0]            # get the current state
@@ -87,6 +87,6 @@ for i in t:
     total_scores.append(np.mean(scores))
     avg_score = np.mean(total_scores[i-min(i,100):i+1])
     with open('data-test.csv', 'a+') as f:
-        f.write("{},{:.3f},{:.3f}\n".format(i, scores[0], avg_score))
+        f.write("{},{:.3f},{:.3f}\n".format(i, total_scores[-1], avg_score))
 
     env.reset(train_mode=True)

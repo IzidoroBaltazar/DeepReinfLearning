@@ -30,7 +30,7 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 class Agent():
     """Interacts with and learns from the environment."""
 
-    def __init__(self, state_size, action_size, seed):
+    def __init__(self, state_size, action_size, seed, num_agents=1):
         """Initialize an Agent object.
 
         Params
@@ -42,6 +42,7 @@ class Agent():
         self.state_size = state_size
         self.action_size = action_size
         self.seed = random.seed(seed)
+        self.num_agents = num_agents
 
         # Q-Network
         self.qnetwork_local = QNetwork(state_size, action_size, seed).to(device)
@@ -55,7 +56,7 @@ class Agent():
         self.critic_optimizer = optim.Adam(self.critic_local.parameters(), lr=LR_CRITIC, weight_decay=WEIGHT_DECAY)
 
         # Noise process for each agent
-        self.noise = OUNoise((1, action_size), seed)
+        self.noise = OUNoise((self.num_agents, action_size), seed)
         # Replay memory
         self.memory = ReplayBuffer(action_size, BUFFER_SIZE, BATCH_SIZE, seed)
         # Initialize time step (for updating every UPDATE_EVERY steps)
@@ -63,7 +64,8 @@ class Agent():
 
     def step(self, state, action, reward, next_state, done):
         # Save experience in replay memory
-        self.memory.add(state, action, reward, next_state, done)
+        for agent in range(self.num_agents):
+            self.memory.add(state[agent,:], action[agent,:], reward[agent], next_state[agent,:], done[agent])
 
         # Learn every UPDATE_EVERY time steps.
         self.t_step = (self.t_step + 1) % UPDATE_EVERY
@@ -81,10 +83,12 @@ class Agent():
             state (array_like): current state
             noise (float): noise level
         """
-        state = torch.from_numpy(state).float().unsqueeze(0).to(device)
+        state = torch.from_numpy(state).float().to(device)
+        action_values = np.zeros((self.num_agents, self.action_size))
         self.qnetwork_local.eval()
         with torch.no_grad():
-            action_values = self.qnetwork_local(state)
+            for agent in range(self.num_agents):
+                action_values[agent,:] = self.qnetwork_local(state[agent,:]).cpu().data.numpy()
         self.qnetwork_local.train()
 
         # if random.random() > noise:
@@ -98,9 +102,9 @@ class Agent():
         #     # print('end else ##############################')
         #     return np.clip(np.random.normal(loc=action_values.cpu().data.numpy()[0], scale=noise), -1, 1)
         # Epsilon-greedy action selection
-        actions = action_values.cpu().data.numpy()[0]
+        actions = action_values
         if noise:
-            actions += self.noise.sample()[0]
+            actions += self.noise.sample()
         return np.clip(actions, -1, 1)
 
     def reset(self):

@@ -83,7 +83,7 @@ After loading training weights we recorded following test results.
 ### 1 vs 20 paddles training
 Graph below visualize difference between training 1 and 20 paddles. We can see that for 20 paddles rolling average is much smoother reaches the goal little bit faster
 but does not reach as high values as for single paddle.
-![alt text](https://raw.githubusercontent.com/IzidoroBaltazar/DeepReinfLearning/master/project2/figure-rolling-averages.png)]
+![alt text](https://raw.githubusercontent.com/IzidoroBaltazar/DeepReinfLearning/master/project2/figure-rolling-averages.png)
 
 ### Conclusions
 Model training was very sensitive to changes in noise or qnetwork architecture modifications.

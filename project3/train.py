@@ -7,7 +7,7 @@ from pycode import Agent
 if sys.platform == "darwin":
     env = UnityEnvironment(file_name="./Tennis.app")
 else:
-    env = UnityEnvironment(file_name="./Tennis_Linux_NoVis_multi/Reacher.x86_64")
+    env = UnityEnvironment(file_name="./Tennis_Linux_NoVis_multi/Tennis.x86_64")
     # env = UnityEnvironment(file_name="./Reacher_Linux_NoVis/Reacher.x86_64")
 
 # get the default brain

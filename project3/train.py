@@ -38,7 +38,7 @@ print('States have length:', state_size)
 
 # env_info
 j = 0
-mx = 1000
+mx = 10000
 
 improvement = False
 total_scores = []
@@ -94,6 +94,6 @@ for i in t:
         max_value = avg_score
         stop = i
 
-    if i > 200 and i > stop + 80:  # i > 200 don't consider stopping criteria if still exploring
+    if i > 4000 and i > stop + 80:  # i > 200 don't consider stopping criteria if still exploring
         print('Training finished no improvements in score recorded in 80 episodes')
         break

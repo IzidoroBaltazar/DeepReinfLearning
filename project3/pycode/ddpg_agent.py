@@ -65,7 +65,7 @@ class Agent():
     def step(self, state, action, reward, next_state, done):
         # Save experience in replay memory
         for agent in range(self.num_agents):
-            self.memory.add(state[agent,:], action[agent,:], reward[agent], next_state[agent,:], done[agent])
+            self.memory.add(state[agent, :], action[agent, :], reward[agent], next_state[agent, :], done[agent])
 
         # Learn every UPDATE_EVERY time steps.
         self.t_step = (self.t_step + 1) % UPDATE_EVERY
@@ -88,20 +88,9 @@ class Agent():
         self.qnetwork_local.eval()
         with torch.no_grad():
             for agent in range(self.num_agents):
-                action_values[agent,:] = self.qnetwork_local(state[agent,:]).cpu().data.numpy()
+                action_values[agent, :] = self.qnetwork_local(state[agent, :]).cpu().data.numpy()
         self.qnetwork_local.train()
 
-        # if random.random() > noise:
-        #     # print('if ********************************')
-        #     # print(action_values.cpu().data.numpy()[0])
-        #     # print('end if ********************************')
-        #     return action_values.cpu().data.numpy()[0]
-        # else:
-        #     # print('else ##############################')
-        #     # print(np.clip(np.random.normal(loc=action_values.cpu().data.numpy()[0], scale=noise), -1, 1))
-        #     # print('end else ##############################')
-        #     return np.clip(np.random.normal(loc=action_values.cpu().data.numpy()[0], scale=noise), -1, 1)
-        # Epsilon-greedy action selection
         actions = action_values
         if noise:
             actions += self.noise.sample()
@@ -123,25 +112,17 @@ class Agent():
         # Get max predicted Q values (for next states) from target model
         actions_next = self.qnetwork_target(next_states)
         Q_targets_next = self.critic_target(next_states, actions_next)
-        #    next_states).detach().max(1)[0].unsqueeze(1)
         # Compute Q targets for current states
         Q_targets = rewards + (gamma * Q_targets_next * (1 - dones))
 
         # Get expected Q values from local model
         Q_expected = self.critic_local(states, actions)
-        # if Q_expected.shape != Q_targets.shape:
-        # print('qexpected', Q_expected.shape)
-        # print('qtargets', Q_targets.shape)
-        # print('rewards', rewards.shape)
-        # print('dones', dones.shape)
         critic_loss = F.mse_loss(Q_expected, Q_targets)
-        # print(Q_targets.shape, Q_expected.shape)
 
         # Compute loss
         self.critic_optimizer.zero_grad()
         critic_loss.backward()
         self.critic_optimizer.step()
-        # loss = F.mse_loss(Q_expected, Q_targets)
 
         actions_pred = self.qnetwork_local(states)
         qnetwork_loss = -self.critic_local(states, actions_pred).mean()
@@ -155,7 +136,6 @@ class Agent():
 
     def soft_update(self, local_model, target_model, tau):
         """Soft update model parameters.
-        θ_target = τ*θ_local + (1 - τ)*θ_target
 
         Params
         ======
@@ -168,16 +148,23 @@ class Agent():
                 tau*local_param.data + (1.0-tau)*target_param.data)
 
     def save_model(self):
-        torch.save(self.qnetwork_local.state_dict(), "model/weights_local.torch")
-        torch.save(self.qnetwork_target.state_dict(), "model/weights_target.torch")
+        torch.save(self.qnetwork_local.state_dict(),
+                   "model/weights_local.torch")
+        torch.save(self.qnetwork_target.state_dict(),
+                   "model/weights_target.torch")
         torch.save(self.critic_local.state_dict(), "model/critic_local.torch")
-        torch.save(self.critic_target.state_dict(), "model/critic_target.torch")
+        torch.save(self.critic_target.state_dict(),
+                   "model/critic_target.torch")
 
     def load_model(self):
-        self.qnetwork_local.load_state_dict(torch.load("model/weights_local.torch", map_location=device))
-        self.qnetwork_target.load_state_dict(torch.load("model/weights_target.torch", map_location=device))
-        self.critic_local.load_state_dict(torch.load("model/critic_local.torch", map_location=device))
-        self.critic_target.load_state_dict(torch.load("model/critic_local.torch", map_location=device))
+        self.qnetwork_local.load_state_dict(torch.load(
+            "model/weights_local.torch", map_location=device))
+        self.qnetwork_target.load_state_dict(torch.load(
+            "model/weights_target.torch", map_location=device))
+        self.critic_local.load_state_dict(torch.load(
+            "model/critic_local.torch", map_location=device))
+        self.critic_target.load_state_dict(torch.load(
+            "model/critic_local.torch", map_location=device))
 
 
 class ReplayBuffer:
@@ -185,6 +172,7 @@ class ReplayBuffer:
 
     def __init__(self, action_size, buffer_size, batch_size, seed):
         """Initialize a ReplayBuffer object.
+        θ_target = τ*θ_local + (1 - τ)*θ_target
 
         Params
         ======
@@ -250,6 +238,7 @@ class OUNoise:
     def sample(self):
         """Update internal state and return it as a noise sample."""
         x = self.state
-        dx = self.theta * (self.mu - x) + self.sigma * np.random.standard_normal(self.size)
+        dx = self.theta * (self.mu - x) + self.sigma * \
+            np.random.standard_normal(self.size)
         self.state = x + dx
         return self.state

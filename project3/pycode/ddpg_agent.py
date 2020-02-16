@@ -9,20 +9,21 @@ import numpy as np
 import random
 from collections import namedtuple, deque
 
+# from pycode.model import QNetwork, Critic
 from pycode.model import QNetwork, Critic
 
 import torch
 import torch.nn.functional as F
 import torch.optim as optim
 
-BUFFER_SIZE = int(1e5)  # replay buffer size
-BATCH_SIZE = 4*64       # minibatch size
+BUFFER_SIZE = 10**4     # replay buffer size
+BATCH_SIZE = 128        # minibatch size
 GAMMA = 0.99            # discount factor
 TAU = 1e-3              # for soft update of target parameters
 LR = 1e-4               # learning rate of the actor
 LR_CRITIC = 1e-4        # learning rate of the critic
-WEIGHT_DECAY = 1e-4     # L2 weight decay
-UPDATE_EVERY = 4
+WEIGHT_DECAY = 0        # L2 weight decay
+UPDATE_EVERY = 1
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -64,8 +65,8 @@ class Agent():
 
     def step(self, state, action, reward, next_state, done):
         # Save experience in replay memory
-        for agent in range(self.num_agents):
-            self.memory.add(state[agent, :], action[agent, :], reward[agent], next_state[agent, :], done[agent])
+        # for agent in range(self.num_agents):
+        self.memory.add(state, action, reward, next_state, done)
 
         # Learn every UPDATE_EVERY time steps.
         self.t_step = (self.t_step + 1) % UPDATE_EVERY
@@ -108,31 +109,66 @@ class Agent():
             gamma (float): discount factor
         """
         states, actions, rewards, next_states, dones = experiences
+        # print('states: ', states.shape)
+        # print('actions: ', actions.shape)
+        # print('rewards: ', rewards.shape)
+        # print('next_states: ', next_states.shape)
+        # print('dones: ', dones.shape)
+        # # print('states: ', states[0])
+        # exit(0)
 
-        # Get max predicted Q values (for next states) from target model
-        actions_next = self.qnetwork_target(next_states)
-        Q_targets_next = self.critic_target(next_states, actions_next)
-        # Compute Q targets for current states
-        Q_targets = rewards + (gamma * Q_targets_next * (1 - dones))
+        for agent in range(self.num_agents):
+            opponent = (agent + 1) % 2
+            # Get max predicted Q values (for next states) from target model
+            actions_next_agent = self.qnetwork_target(next_states[agent])
+            # print(actions_next_agent, next_states[agent])
+            Q_targets_next = self.critic_target(next_states[agent], actions_next_agent)
+            actions_next_opponent = self.qnetwork_target(next_states[opponent])
+            Q_targets_opponent = torch.flatten(
+                self.critic_target(next_states[opponent], actions_next_opponent))
+            Q_targets_agent = torch.flatten(
+                self.critic_target(next_states[agent], actions_next_agent))
+            # Compute Q targets for current states
+            # print(Q_targets_opponent.shape)
+            # Q_targets = rewards + (gamma * Q_targets_next * (1 - dones))
+            # Q_targets_o = rewards[opponent] + (gamma * Q_targets_opponent * (1 - dones[opponent]))
+            Q_targets_a = rewards[agent] + (gamma * Q_targets_agent * (1 - dones[agent]))
+            Q_targets = Q_targets_a + rewards[opponent]
+            # Q_targets = Q_targets_a + rewards[opponent]
+            # import pdb; pdb.set_trace()
 
-        # Get expected Q values from local model
-        Q_expected = self.critic_local(states, actions)
-        critic_loss = F.mse_loss(Q_expected, Q_targets)
+            # Get expected Q values from local model
+            Q_expected_a = torch.flatten(self.critic_local(states[agent], actions[agent]))
+            # Q_expected_o = torch.flatten(self.critic_local(states[opponent], actions[opponent]))
+            # Q_expected = Q_expected_a + Q_expected_o
+            Q_expected = Q_expected_a
+            # print(Q_expected.shape, Q_targets.shape)
+            critic_loss = F.mse_loss(Q_expected, Q_targets)
 
-        # Compute loss
-        self.critic_optimizer.zero_grad()
-        critic_loss.backward()
-        self.critic_optimizer.step()
+            # Compute loss
+            self.critic_optimizer.zero_grad()
+            critic_loss.backward()
+            self.critic_optimizer.step()
 
-        actions_pred = self.qnetwork_local(states)
-        qnetwork_loss = -self.critic_local(states, actions_pred).mean()
-        # Minimize the loss
-        self.qnetwork_optimizer.zero_grad()
-        qnetwork_loss.backward()
-        self.qnetwork_optimizer.step()
+            actions_pred_a = self.qnetwork_local(states[agent])
+            # actions_pred_o = self.qnetwork_local(states[opponent])
+            qnetwork_loss_a = -self.critic_local(states[agent], actions_pred_a).mean()
+            # qnetwork_loss_o = -self.critic_local(states[opponent], actions_pred_o).mean()
+            # qnetwork_loss = qnetwork_loss_a - rewards[opponent]
+            # qnetwork_loss = qnetwork_loss_a.mean()
+            # qnetwork_loss = qnetwork_loss_a + qnetwork_loss_o
+            # import pdb; pdb.set_trace()
+            qnetwork_loss = qnetwork_loss_a
+            # Minimize the loss
+            self.qnetwork_optimizer.zero_grad()
+            qnetwork_loss.backward()
+            # qnetwork_loss = qnetwork_loss_o
+            # self.qnetwork_optimizer.zero_grad()
+            # qnetwork_loss.backward()
+            self.qnetwork_optimizer.step()
 
-        self.soft_update(self.critic_local, self.critic_target, TAU)
-        self.soft_update(self.qnetwork_local, self.qnetwork_target, TAU)
+            self.soft_update(self.critic_local, self.critic_target, TAU)
+            self.soft_update(self.qnetwork_local, self.qnetwork_target, TAU)
 
     def soft_update(self, local_model, target_model, tau):
         """Soft update model parameters.
@@ -187,26 +223,39 @@ class ReplayBuffer:
         self.experience = namedtuple("Experience", field_names=[
                                      "state", "action", "reward", "next_state", "done"])
         self.seed = random.seed(seed)
+        self.buffer_size = buffer_size
+        self.average_reward = 0
 
     def add(self, state, action, reward, next_state, done):
         """Add a new experience to memory."""
         e = self.experience(state, action, reward, next_state, done)
+        # if (np.absolute(e.reward).sum()) > 0.:
         self.memory.append(e)
+        # self.average_reward = (e.reward.sum() + self.average_reward) / 2
+        # self.memory.append(e)
+        # import pdb; pdb.set_trace()
 
     def sample(self):
         """Randomly sample a batch of experiences from memory."""
         experiences = random.sample(self.memory, k=self.batch_size)
 
         states = torch.from_numpy(
-            np.vstack([e.state for e in experiences if e is not None])).float().to(device)
+            np.stack([e.state for e in experiences if e is not None], axis=1)).float().to(device)
         actions = torch.from_numpy(
-            np.vstack([e.action for e in experiences if e is not None])).float().to(device)
+            np.stack([e.action for e in experiences if e is not None], axis=1)).float().to(device)
         rewards = torch.from_numpy(
-            np.vstack([e.reward for e in experiences if e is not None])).float().to(device)
-        next_states = torch.from_numpy(np.vstack(
-            [e.next_state for e in experiences if e is not None])).float().to(device)
-        dones = torch.from_numpy(np.vstack(
-            [e.done for e in experiences if e is not None]).astype(np.uint8)).float().to(device)
+            np.stack([e.reward for e in experiences if e is not None], axis=1)).float().to(device)
+        next_states = torch.from_numpy(np.stack(
+            [e.next_state for e in experiences if e is not None], axis=1)).float().to(device)
+        dones = torch.from_numpy(np.stack(
+            [e.done for e in experiences if e is not None], axis=1).astype(np.uint8)).float().to(device)
+
+        # print('states: ', states.shape)
+        # print('actions: ', actions.shape)
+        # print('rewards: ', rewards.shape)
+        # print('next_states: ', next_states.shape)
+        # print('dones: ', dones.shape)
+        # import pdb; pdb.set_trace()
 
         return (states, actions, rewards, next_states, dones)
 
@@ -218,7 +267,8 @@ class ReplayBuffer:
 class OUNoise:
     """Ornstein-Uhlenbeck process."""
 
-    def __init__(self, size, seed, mu=0., theta=0.15, sigma=0.25, sigma_min=0.01, sigma_decay=0.98):
+    # def __init__(self, size, seed, mu=0., theta=0.15, sigma=0.25, sigma_min=0.01, sigma_decay=1-1e-3):
+    def __init__(self, size, seed, mu=0., theta=0.15, sigma=0.15, sigma_min=0.025, sigma_decay=.999):
         """Initialize parameters and noise process."""
         self.mu = mu * np.ones(size)
         self.theta = theta
@@ -234,6 +284,7 @@ class OUNoise:
         self.state = copy.copy(self.mu)
         """Sigma reduction"""
         self.sigma = max(self.sigma_min, self.sigma*self.sigma_decay)
+        # print('sigma: ', self.sigma)
 
     def sample(self):
         """Update internal state and return it as a noise sample."""

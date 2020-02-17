@@ -10,10 +10,10 @@ DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 if sys.platform == "darwin":
     # env = UnityEnvironment(file_name="./Reacher.app")  # 1 agent
-    env = UnityEnvironment(file_name="./Reacher_20.app")  # 20 agents
+    env = UnityEnvironment(file_name="./Tennis.app")
 else:
-    # env = UnityEnvironment(file_name="Reacher_Linux_NoVis/Reacher.x86_64")  # 1 agents
-    env = UnityEnvironment(file_name="Reacher_Linux_NoVis_multi/Reacher.x86_64")  # 20 agents
+    # env = UnityEnvironment(file_name="./Tennis_Linux/Tennis.x86_64")
+    env = UnityEnvironment(file_name="./Tennis_Linux_NoVis/Tennis.x86_64")
 
 # get the default brain
 brain_name = env.brain_names[0]
@@ -84,9 +84,11 @@ for i in t:
         if np.any(dones):
             break
 
-    total_scores.append(np.mean(scores))
+    total_scores.append(np.max(scores))
     avg_score = np.mean(total_scores[i-min(i,100):i+1])
     with open('data-test.csv', 'a+') as f:
         f.write("{},{:.3f},{:.3f}\n".format(i, total_scores[-1], avg_score))
+
+    t.set_postfix(score=total_scores[-1], score_avg=avg_score)
 
     env.reset(train_mode=True)

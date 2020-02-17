@@ -99,8 +99,8 @@ for i in t:
         #     avg_train_score = (avg_train_score + np.max(scores)) / 2
         # if avg_train_score > threshold:
         #     threshold += 0.1
-        if np.max(scores) > 0:
-            j = 2
+        # if np.max(scores) > 0:
+        #     j = 2
         for _ in range(j):
             for e in episodes:
                 agent.step(**e)
@@ -126,6 +126,6 @@ for i in t:
     # if avg_score > 0.5:
     #     break
 
-    if i > 2000 and i > stop + 1000:  # i > 200 don't consider stopping criteria if still exploring
-        print('Training finished no improvements in score recorded in 1000 episodes')
+    if i > 1200 and i > stop + 200:  # i > 200 don't consider stopping criteria if still exploring
+        print('Training finished no improvements in score recorded in 200 episodes')
         break

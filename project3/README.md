@@ -87,4 +87,7 @@ Image showing solution to the problem. Paddles are hitting the ball.
 
 ### Conclusions
 To improve training score we would have to understand why in some exchanges no paddle or at most one paddle hits the ball. This seems to be
-consistent pattern whenever ball is hit at least two times the game usually reaches high score above 0.5 (target).
+consistent pattern whenever ball is hit at least two times the game usually reaches high score above 0.5 (target). Once game is stable agents can keep the ball
+in the game for quite a few exchanges. It is important for the agent to somehow sabilize the ball. The first few hits are most important.
+
+We can observe the graph and see two clear clusters one around 2.5 and the other around 0 points.

@@ -106,22 +106,15 @@ class Agent():
         Params
         ======
             experiences (Tuple[torch.Variable]): tuple of (s, a, r, s', done) tuples
+            (all of the experiences are actions of both agents stacked)
             gamma (float): discount factor
         """
         states, actions, rewards, next_states, dones = experiences
-        # print('states: ', states.shape)
-        # print('actions: ', actions.shape)
-        # print('rewards: ', rewards.shape)
-        # print('next_states: ', next_states.shape)
-        # print('dones: ', dones.shape)
-        # # print('states: ', states[0])
-        # exit(0)
 
         for agent in range(self.num_agents):
             opponent = (agent + 1) % 2
             # Get max predicted Q values (for next states) from target model
             actions_next_agent = self.qnetwork_target(next_states[agent])
-            # print(actions_next_agent, next_states[agent])
             Q_targets_next = self.critic_target(next_states[agent], actions_next_agent)
             actions_next_opponent = self.qnetwork_target(next_states[opponent])
             Q_targets_opponent = torch.flatten(
@@ -129,7 +122,6 @@ class Agent():
             Q_targets_agent = torch.flatten(
                 self.critic_target(next_states[agent], actions_next_agent))
             # Compute Q targets for current states
-            # print(Q_targets_opponent.shape)
             # Q_targets = rewards + (gamma * Q_targets_next * (1 - dones))
             # Q_targets_o = rewards[opponent] + (gamma * Q_targets_opponent * (1 - dones[opponent]))
             Q_targets_a = rewards[agent] + (gamma * Q_targets_agent * (1 - dones[agent]))
@@ -142,7 +134,6 @@ class Agent():
             # Q_expected_o = torch.flatten(self.critic_local(states[opponent], actions[opponent]))
             # Q_expected = Q_expected_a + Q_expected_o
             Q_expected = Q_expected_a
-            # print(Q_expected.shape, Q_targets.shape)
             critic_loss = F.mse_loss(Q_expected, Q_targets)
 
             # Compute loss
@@ -250,13 +241,6 @@ class ReplayBuffer:
         dones = torch.from_numpy(np.stack(
             [e.done for e in experiences if e is not None], axis=1).astype(np.uint8)).float().to(device)
 
-        # print('states: ', states.shape)
-        # print('actions: ', actions.shape)
-        # print('rewards: ', rewards.shape)
-        # print('next_states: ', next_states.shape)
-        # print('dones: ', dones.shape)
-        # import pdb; pdb.set_trace()
-
         return (states, actions, rewards, next_states, dones)
 
     def __len__(self):
@@ -267,7 +251,6 @@ class ReplayBuffer:
 class OUNoise:
     """Ornstein-Uhlenbeck process."""
 
-    # def __init__(self, size, seed, mu=0., theta=0.15, sigma=0.25, sigma_min=0.01, sigma_decay=1-1e-3):
     def __init__(self, size, seed, mu=0., theta=0.15, sigma=0.15, sigma_min=0.025, sigma_decay=.999):
         """Initialize parameters and noise process."""
         self.mu = mu * np.ones(size)
@@ -284,7 +267,6 @@ class OUNoise:
         self.state = copy.copy(self.mu)
         """Sigma reduction"""
         self.sigma = max(self.sigma_min, self.sigma*self.sigma_decay)
-        # print('sigma: ', self.sigma)
 
     def sample(self):
         """Update internal state and return it as a noise sample."""

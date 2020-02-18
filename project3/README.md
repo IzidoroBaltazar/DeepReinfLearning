@@ -10,7 +10,7 @@ reward is increased by 0.1 point.
 Vector of size 24.
 
 ### Rewards
-Based on the number of exchanges.
+Based on the number of exchanges. 0.1 point per ball exchange.
 
 ### Goal
 Reach average reward of at least 0.5 points per episode - which means at least 5 exchanges.
@@ -24,10 +24,10 @@ We used code from previous project 2, Deep Deterministic Policy Gradient learnin
 * early stopping - if average score was not improved in the last 200 iterations training will stop.
 
 ### Modifications from Continuous Control project
-Key modification was in reply buffer and learning process.
+Key modification was in replay buffer and learning process.
 
 #### Memory storing changes
-We modified `ReplayBuffer.sample()` method of 
+We modified `ReplayBuffer.sample()` method. The code change allows access to both agents data.
 ```python
 class ReplayBuffer:
     """Fixed-size buffer to store experience tuples."""
@@ -80,11 +80,14 @@ Image showing solution to the problem. Paddles are hitting the ball.
 
 ### Test
 * Test run with model weights loaded from `model/weights_local.torch` and `model/weights_target.torch` weights for cirtic are stored and loaded as well.
-* To test included model you can run `python3 test.py` it will generate file data-test.csv with performace data recorded.
+* To test included model you can run `python3 test-tennis.py` it will generate file data-test.csv with performace data recorded.
 * Rolling average after 100 test episodes: 1.409
 * Max score: 2.7
 ![alt text](https://raw.githubusercontent.com/IzidoroBaltazar/DeepReinfLearning/master/project3/figure-tennis-test-rolling-averages.png)
 
 ### Conclusions
-To improve training score we would have to understand why in some exchanges no paddle or at most one paddle hits the ball. This seems to be
-consistent pattern whenever ball is hit at least two times the game usually reaches high score above 0.5 (target).
+To improve training score we would have to understand why in some exchanges no paddle or at most one paddle hits the ball. This seems to be consistent pattern whenever
+ball is hit at least two times the game usually reaches high score above 0.5 (target). Once game is stable agents can keep the ball in the game for quite a few exchanges.
+It is important for the agent to somehow sabilize the ball. The first few hits are most important.
+
+We can observe the graph and see two clear clusters one above 2.5 and the other around 0 points. Any training changes need to consider the starting conditions.
